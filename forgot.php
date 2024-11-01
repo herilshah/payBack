@@ -1,3 +1,29 @@
+<?php
+include 'db_connect.php';
+
+$errorMessage = '';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $newPassword = $_POST['new_password'];
+    $confirmPassword = $_POST['confirm_password'];
+
+    $checkQuery = "SELECT * FROM Users WHERE username = '$username'";
+    $checkResult = mysqli_query($conn, $checkQuery);
+    
+    if (mysqli_num_rows($checkResult) > 0) {
+        $query = "UPDATE Users SET password = '$newPassword' WHERE username = '$username'";
+        if (mysqli_query($conn, $query)) {
+            header("Location: login.php");
+            exit();        } 
+        else {
+            $errorMessage = 'Error updating password';
+        }
+    } else {
+        $errorMessage = 'Username not found';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +35,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Input focus and blur animations
+            
             $('.custom-input').on('focus', function() {
                 $(this).animate({ backgroundColor: '#333' }, 300);
             }).on('blur', function() {
@@ -20,31 +46,29 @@
         function validateForgotPasswordForm() {
             let valid = true;
 
-            // Clear previous invalid classes and messages
+            
             document.querySelectorAll('.custom-input').forEach(input => {
                 input.classList.remove('is-invalid');
                 const errorMessage = input.nextElementSibling;
                 if (errorMessage) {
-                    errorMessage.innerHTML = ''; // Clear previous messages
+                    errorMessage.innerHTML = ''; 
                 }
             });
 
-            // Validate Username
-            const username = document.querySelector('input[placeholder="Username"]').value;
+            const username = document.querySelector('input[name="username"]').value;
             if (username.length < 3) {
                 valid = false;
                 showError('Username must be at least 3 characters long.', 'Username');
             }
 
-            // Validate New Password
-            const newPassword = document.querySelector('input[placeholder="New Password"]').value;
-            if (newPassword.length < 6) {
+            const newPassword = document.querySelector('input[name="new_password"]').value;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+            if (!passwordRegex.test(newPassword)) {
                 valid = false;
-                showError('New Password must be at least 6 characters long.', 'New Password');
+                showError('Password must be at least 6 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.', 'New Password');
             }
 
-            // Validate Confirm New Password
-            const confirmPassword = document.querySelector('input[placeholder="Confirm New Password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
             if (newPassword !== confirmPassword) {
                 valid = false;
                 showError('Passwords do not match.', 'Confirm New Password');
@@ -62,14 +86,11 @@
             inputField.parentNode.insertBefore(errorMessage, inputField.nextSibling);
         }
 
-        // Attach validation to the form submission
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form');
             form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Prevent default form submission
-                if (validateForgotPasswordForm()) {
-                    alert('Password reset link sent!'); // Placeholder for actual reset logic
-                    // You can proceed to submit the form via AJAX here
+                if (!validateForgotPasswordForm()) {
+                    e.preventDefault(); 
                 }
             });
         });
@@ -84,20 +105,23 @@
             <div class="col-lg-6">
                 <h1 class="app-name">APP NAME</h1>
                 <h3 class="mb-4">FORGOT PASSWORD</h3>
-                <form>
+                <form method="POST">
                     <div class="mb-3">
-                        <input type="text" class="form-control custom-input" placeholder="Username" required>
+                        <input type="text" name="username" class="form-control custom-input" placeholder="Username">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control custom-input" placeholder="New Password" required>
+                        <input type="password" name="new_password" class="form-control custom-input" placeholder="New Password">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control custom-input" placeholder="Confirm New Password" required>
+                        <input type="password" name="confirm_password" class="form-control custom-input" placeholder="Confirm New Password">
                     </div>
                     <button type="submit" class="btn btn-light btn-lg w-100">Reset Password</button>
                 </form>
+                <?php if (!empty($errorMessage)): ?>
+                    <div class="mt-3 text-danger"><?php echo $errorMessage; ?></div>
+                <?php endif; ?>
                 <div class="mt-3">
-                    <small>Remembered your password? <a href="login.html" class="text-light">Login</a></small>
+                    <small>Remembered your password? <a href="login.php" class="text-light">Login</a></small>
                 </div>
             </div>
         </div>

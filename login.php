@@ -1,3 +1,32 @@
+<?php
+include 'db_connect.php';
+
+$errorMessage = '';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Fetch the stored password for the entered username
+    $query = "SELECT password FROM Users WHERE username = '$username'";
+    $result = mysqli_query($conn, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $storedPassword = $row['password'];
+
+        // Check if the entered password matches the stored password
+        if ($password === $storedPassword) {
+            header("Location: home.php");
+            exit();
+        } else {
+            $errorMessage = "Incorrect password.";
+        }
+    } else {
+        $errorMessage = "Username not found.";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,12 +54,11 @@
         function validateLoginForm() {
             let valid = true;
 
-            // Clear previous invalid classes and messages
             document.querySelectorAll('.custom-input').forEach(input => {
                 input.classList.remove('is-invalid');
                 const errorMessage = input.nextElementSibling;
                 if (errorMessage) {
-                    errorMessage.innerHTML = ''; // Clear previous messages
+                    errorMessage.innerHTML = ''; 
                 }
             });
 
@@ -46,7 +74,7 @@
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
             if (password.length < 6 || !passwordRegex.test(password)) {
                 valid = false;
-                showError('Password must ba special character', 'Password');
+                showError('Password must be a special character', 'Password');
             }
 
             return valid;
@@ -65,10 +93,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form');
             form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Prevent default form submission
-                if (validateLoginForm()) {
-                    alert('Login successful!'); // Placeholder for actual login logic
-                    // You can proceed to submit the form via AJAX here
+                if (!validateLoginForm()) {
+                    e.preventDefault(); 
                 }
             });
         });
@@ -84,20 +110,23 @@
             <div class="col-lg-6">
                 <h1 class="app-name">APP NAME</h1>
                 <h3 class="mb-4">LOGIN</h3>
-                <form>
+                <form method="POST">
                     <div class="mb-3">
-                        <input type="text" class="form-control custom-input" placeholder="Username">
+                        <input type="text" name="username" class="form-control custom-input" placeholder="Username">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control custom-input" placeholder="Password">
+                        <input type="password" name="password" class="form-control custom-input" placeholder="Password">
                     </div>
                     <button type="submit" class="btn btn-light btn-lg w-100">Login</button>
                 </form>
+                <?php if (!empty($errorMessage)): ?>
+                    <div class="mt-3 text-danger"><?php echo $errorMessage; ?></div>
+                <?php endif; ?>
                 <div class="mt-3">
-                    <small>Don't have an account? <a href="signup.html" class="text-light">Sign Up</a></small>
+                    <small>Don't have an account? <a href="signup.php" class="text-light">Sign Up</a></small>
                 </div>
                 <div class="mt-1">
-                    <small><a href="forgot.html" class="text-light">Forgot Password?</a></small>
+                    <small><a href="forgot.php" class="text-light">Forgot Password?</a></small>
                 </div>
             </div>
         </div>
