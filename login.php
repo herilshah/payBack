@@ -7,7 +7,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Fetch the stored password for the entered username
     $query = "SELECT password FROM Users WHERE username = '$username'";
     $result = mysqli_query($conn, $query);
 
@@ -15,9 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $row = mysqli_fetch_assoc($result);
         $storedPassword = $row['password'];
 
-        // Check if the entered password matches the stored password
         if ($password === $storedPassword) {
-            header("Location: home.php");
+            $queryUserId = "SELECT user_id FROM Users WHERE username = '$username'";
+            $resultUserId = mysqli_query($conn, $queryUserId);
+            $rowUserId = mysqli_fetch_assoc($resultUserId);
+            $userId = $rowUserId['user_id'];
+            
+            header("Location: home.php?user_id=$userId");
             exit();
         } else {
             $errorMessage = "Incorrect password.";

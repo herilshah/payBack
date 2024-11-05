@@ -1,5 +1,19 @@
 <?php
 include 'db_connect.php';
+
+// Fetch user_id from URL
+$user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+
+// Fetch username using user_id
+$username = '';
+if ($user_id > 0) {
+    $query = "SELECT username FROM users WHERE user_id = $user_id";
+    $result = mysqli_query($conn, $query);
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $username = $row['username'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,9 +85,16 @@ include 'db_connect.php';
         </div>
 
         <div class="friends-section">
-            <h2>Add Friends by Searching</h2>
+            <h2>Add Friends by Searching <?php echo htmlspecialchars($username); ?></h2>
             <button class="btn btn-add-expense">Add Expenses</button>
         </div>
+        
+        <!-- Display username if available -->
+        <?php if ($username): ?>
+            <div class="mt-3" class="friends-section">
+                <h3>Welcome, <?php echo htmlspecialchars($username); ?>!</h3>
+            </div>
+        <?php endif; ?>
     </div>
 </body>
 </html>
