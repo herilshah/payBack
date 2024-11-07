@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+
     <style>
         body {
             background-color: #121212;
@@ -19,21 +21,33 @@
         .header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start; /* Align items to the left */
             padding-bottom: 1rem;
             border-bottom: 1px solid #333;
         }
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 0;
+        /* Styling the PAYBACK text */
+        .payback-text {
+            font-family: 'Staatliches', sans-serif;
+            font-weight: 400;
+            font-size: 60px;
+            line-height: 75px;
+            color: #fff;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            margin-right: 20px;  /* Space between "PAYBACK" and the button */
         }
-        .header .nav-link {
-            color: #bbb;
+        .btn-add-friends {
+            background-color: #121212;
+            color: #fff;
+            border: 1px solid #00b530;
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            margin-left: 20px; /* Moves the button to the right */
         }
         .search-bar {
             width: 100%;
-            max-width: 800px; /* Increased width */
+            max-width: 800px;
             background-color: #121212;
             color: #fff;
             border: 1px solid #121212;
@@ -46,7 +60,7 @@
             border: 1px solid #00b530;
             border-radius: 20px;
             padding: 0.5rem 1.5rem;
-            margin-top: 1rem; /* Added margin for gap */
+            margin-top: 1rem;
         }
         .friends-section, .activity-section {
             padding-top: 1.5rem;
@@ -58,12 +72,12 @@
         .friend-item {
             background-color: #121212;
             border-radius: 8px;
-            padding: 0.20rem; /* Decreased padding for height */
+            padding: 0.20rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 1rem;
-            border: 1px solid #fff; /* White outline */
+            border: 1px solid #fff;
         }
         .friend-item .friend-name {
             font-weight: bold;
@@ -86,11 +100,19 @@
             color: #FFFFFF;
             padding: 0.5rem 0;
             border-bottom: 1px solid #333;
-            max-width: 350px; /* Decreased width */
+            max-width: 350px;
         }
         .activity-item .activity-date {
             font-size: 0.8rem;
             color: #666;
+        }
+        .btn-add-friends {
+            background-color: #121212;
+            color: #fff;
+            border: 1px solid #00b530;
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            margin-top: 1rem;
         }
     </style>
 </head>
@@ -98,9 +120,13 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <input type="text" class="search-bar" placeholder="Search for people...">
-            <h1>APP NAME</h1>
-            <a href="#" class="nav-link">Contact Us</a>
+            <!-- PAYBACK Text -->
+            <div class="payback-text">PAYBACK</div>
+            <!-- Add Friends Button -->
+            <a href="searchpage.php">
+    <button class="btn btn-add-friends">Add Friends</button>
+</a>
+
         </div>
 
         <div class="d-flex justify-content-between">
@@ -108,7 +134,10 @@
             <div class="friends-section col-md-7">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>Your Friends</h2>
-                    <button class="btn btn-add-expense">Add Expenses</button>
+                    <a href="addexpense.php">
+    <button class="btn btn-add-expense">Add Expenses</button>
+</a>
+
                 </div>
                 <br>
                 <!-- Friend Items -->
